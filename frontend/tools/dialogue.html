@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dialogue Generator</title>
+  <link rel="stylesheet" href="../styles/main.css" />
+</head>
+<body class="tool-page">
+  <div class="site-wrapper">
+    <header class="site-header">
+      <a class="brand" href="../index.html">
+        <span class="brand-icon">M</span>
+        <span class="brand-text">Modders Tool Suite</span>
+      </a>
+      <nav class="main-nav">
+        <a class="nav-link" href="../index.html">Home</a>
+        <a class="nav-link active" href="../index.html#tools">Tools</a>
+        <a class="nav-link" href="../index.html#workflow">Workflow</a>
+        <a class="nav-link" href="../index.html#team">Team</a>
+      </nav>
+      <a class="nav-cta" href="../index.html#tools">Launch Workspace</a>
+    </header>
+
+    <main class="tool-page-wrap">
+      <section class="tool-hero-section">
+        <img src="/frontend/assets/dialogue-hero.png" class="tool-hero">
+        <div class="hero-copy">
+          <span class="section-kicker">Dialogue Tool</span>
+          <h1>Dialogue Generator</h1>
+          <p class="hero-lede">Create natural NPC dialogue, relationship tension, and story-forward conversations.</p>
+        </div>
+      </section>
+
+      <section class="tool-layout">
+        <section class="tool-form-wrap">
+          <label class="form-label" for="prompt">Enter dialogue context</label>
+          <div class="tool-form">
+            <textarea id="prompt" placeholder="Describe a character, location, mood, and the relationship or tension you want to create.">A cautious village archivist is hiding a map from an outsider.</textarea>
+            <div class="form-actions">
+              <button class="button button-primary" id="generate">Generate</button>
+            </div>
+          </div>
+          <div class="output-panel">
+            <pre id="output">Dialogue output will appear here.</pre>
+          </div>
+        </section>
+
+        <aside class="tool-side-card">
+          <span class="section-kicker">Dialogue System</span>
+          <h3>Conversation Design</h3>
+          <p>Shape voice, emotion, and progression through a concise generator built for narrative clarity.</p>
+          <div class="side-meta">
+            <span>NPC Voice</span>
+            <span>Tone</span>
+            <span>Arc</span>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-brand">
+        <span class="brand-icon small">M</span>
+        <span class="brand-text">Modders Tool Suite V1</span>
+      </div>
+      <div class="footer-links">
+        <a href="../index.html#tools">Tools</a>
+        <a href="../index.html#workflow">Workflow</a>
+        <a href="../index.html#team">Team</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const generateButton = document.getElementById('generate');
+    const promptInput = document.getElementById('prompt');
+    const output = document.getElementById('output');
+
+    generateButton.addEventListener('click', async () => {
+      const prompt = promptInput.value.trim();
+      output.textContent = 'Generating dialogue...';
+
+      try {
+        const response = await fetch('/api/run-tool', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tool: 'dialogue', prompt })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          output.textContent = data.error || 'Unknown error';
+          return;
+        }
+
+        output.textContent = data.output;
+      } catch (error) {
+        output.textContent = error.message || 'Could not connect to the tool API.';
+      }
+    });
+  </script>
+</body>
+</html>

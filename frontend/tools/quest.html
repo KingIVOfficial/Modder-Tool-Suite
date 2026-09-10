@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quest Designer</title>
+  <link rel="stylesheet" href="../styles/main.css" />
+</head>
+<body class="tool-page">
+  <div class="site-wrapper">
+    <header class="site-header">
+      <a class="brand" href="../index.html">
+        <span class="brand-icon">M</span>
+        <span class="brand-text">Modders Tool Suite</span>
+      </a>
+      <nav class="main-nav">
+        <a class="nav-link" href="../index.html">Home</a>
+        <a class="nav-link active" href="../index.html#tools">Tools</a>
+        <a class="nav-link" href="../index.html#workflow">Workflow</a>
+        <a class="nav-link" href="../index.html#team">Team</a>
+      </nav>
+      <a class="nav-cta" href="../index.html#tools">Launch Workspace</a>
+    </header>
+
+    <main class="tool-page-wrap">
+      <section class="tool-hero-section">
+        <img src="/frontend/assets/quest-hero.png" class="tool-hero">
+        <div class="hero-copy">
+          <span class="section-kicker">Quest Tool</span>
+          <h1>Quest Designer</h1>
+          <p class="hero-lede">Plan player journeys with objectives, discovery, rewards, and meaningful progression.</p>
+        </div>
+      </section>
+
+      <section class="tool-layout">
+        <section class="tool-form-wrap">
+          <label class="form-label" for="prompt">Enter quest brief</label>
+          <div class="tool-form">
+            <textarea id="prompt" placeholder="Describe the setting, objective, player motivation, and the experience you want to create.">Create a quest for a player who must protect a hidden forge from a shifting storm.</textarea>
+            <div class="form-actions">
+              <button class="button button-primary" id="generate">Generate</button>
+            </div>
+          </div>
+          <div class="output-panel">
+            <pre id="output">Quest output will appear here.</pre>
+          </div>
+        </section>
+
+        <aside class="tool-side-card">
+          <span class="section-kicker">Quest System</span>
+          <h3>Journey Mapping</h3>
+          <p>Outline player motivations, encounter flow, reward logic, and narrative decisions into a mod-ready quest structure.</p>
+          <div class="side-meta">
+            <span>Objective</span>
+            <span>Reward</span>
+            <span>Hook</span>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-brand">
+        <span class="brand-icon small">M</span>
+        <span class="brand-text">Modders Tool Suite V1</span>
+      </div>
+      <div class="footer-links">
+        <a href="../index.html#tools">Tools</a>
+        <a href="../index.html#workflow">Workflow</a>
+        <a href="../index.html#team">Team</a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const generateButton = document.getElementById('generate');
+    const promptInput = document.getElementById('prompt');
+    const output = document.getElementById('output');
+
+    generateButton.addEventListener('click', async () => {
+      const prompt = promptInput.value.trim();
+      output.textContent = 'Generating quest...';
+
+      try {
+        const response = await fetch('/api/run-tool', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tool: 'quest', prompt })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          output.textContent = data.error || 'Unknown error';
+          return;
+        }
+
+        output.textContent = data.output;
+      } catch (error) {
+        output.textContent = error.message || 'Could not connect to the tool API.';
+      }
+    });
+  </script>
+</body>
+</html>
